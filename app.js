@@ -31,7 +31,12 @@ function init() {
       name: "startingQuestion",
       type: "list",
       message: "What would you like to do today?",
-      choices: ["View Employees", "Add Employee"],
+      choices: [
+        "View Employees",
+        "Add Employee",
+        "View Department",
+        "View Roles",
+      ],
     })
     .then(function (response) {
       // console.log(response);
@@ -39,14 +44,50 @@ function init() {
         showEmployees();
       } else if (response.startingQuestion === "Add Employee") {
         addEmployee();
+      } else if (response.startingQuestion === "View Department") {
+        viewDepartment();
+      } else if (response.startingQuestion === "View Roles") {
+        showRoles();
       }
     });
 }
 
+function viewDepartment() {
+  var query = "SELECT * FROM department";
+  console.log("let's check out these DEPARTMENTS!");
+  connection.query(query, function (err, res) {
+    console.log("Departments:");
+    res.forEach((department) => {
+      console.log(`${department.name}`);
+    });
+  });
+}
+
+function showEmployees() {
+  var query = "SELECT * FROM employee";
+  console.log("Let's check out these super stars!");
+  connection.query(query, function (err, res) {
+    console.log("Employees:");
+    res.forEach((employee) => {
+      console.log(`${employee.first_name} ${employee.last_name}`);
+    });
+  });
+}
+
+function showRoles() {
+  var query = "SELECT * FROM role";
+  connection.query(query, function (err, res) {
+    console.log("Roles");
+    res.forEach((role) => {
+      console.log(`${role.title}`);
+    });
+  });
+}
 function addEmployee() {
   console.log("Let's add an employee");
   // const arrayOfManagers
-  connection.query("SELECT * FROM employee", function (err, res) {
+  const query = "SELECT * FROM employee";
+  connection.query(query, function (err, res) {
     if (err) throw err;
     inquirer
       .prompt([
@@ -74,20 +115,22 @@ function addEmployee() {
             //   },
             ["Software Engineer", "UX Designer"],
         },
-        // ,
-        // {
-        //     type: "list",
-        //     name: "manager_id",
-        //     message: "Who is their manager?",
-        //     choices: []
-        // }
+        {
+          type: "list",
+          name: "manager_id",
+          message: "Who is their manager?",
+          choices: ["MANAGER 1", "MANAGER 2"],
+        },
       ])
       .then(function (res) {
         console.log(res);
+        connection.query("INSERT INTO employee SET ?", res, function (
+          err,
+          res
+        ) {
+          if (err) throw err;
+          console.log("Employee Added!");
+        });
       });
   });
-}
-
-function showEmployees() {
-  console.log("All Employees");
 }
