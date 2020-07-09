@@ -38,6 +38,7 @@ function init() {
         "Add Employee",
         "Add Department",
         "Add Role",
+        "Update Employee",
       ],
     })
     .then(function (response) {
@@ -54,6 +55,8 @@ function init() {
         addDepartment();
       } else if (response.startingQuestion === "Add Role") {
         addRoles();
+      } else if (response.startingQuestion === "Update Employee") {
+        updateEmployee();
       }
     });
 }
@@ -209,7 +212,7 @@ function addRoles() {
           let id = matchedDepartment[0].id;
           //now we need to inject these roles
           connection.query(
-            "INSERT INTO role(title, salary, department_id VALUES (?, ?, ?)",
+            "INSERT INTO role(title, salary, department_id) VALUES (?, ?, ?)",
             [userChoice.title, parseInt(userChoice.salary), id],
             function (err, res) {
               if (err) throw err;
@@ -218,7 +221,76 @@ function addRoles() {
           );
         });
 
-        console.log(userChoice);
+        // console.log(userChoice);
       });
+  });
+}
+
+function updateEmployee() {
+  console.log("Please select the employee you would like to update:");
+  connection.query("SELECT * FROM employee", function (err, res) {
+    console.log("We are in the query!!!!!!!!!!");
+    const arrayOfEmployees = res.map(
+      // (employee) => employee.first_name + " " + employee.last_name
+      (employee) => employee.last_name
+    );
+    const arrayOfRoles = res.map((role) => role.title);
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selectedEmployee",
+          message:
+            "Select the employee whose information you'd like to update (by last name)",
+          choices: arrayOfEmployees,
+        },
+      ])
+      .then(function (res) {
+        console.log(res);
+        //need to store the selected name so we can grab the info
+        const name = res.selectedEmployee;
+        connection.query("SELECT * FROM role", function (err, res) {
+          const arrayOfRoles = res.map((roles) => roles.title);
+          inquirer
+            .prompt([
+              {
+                name: "role",
+                type: "list",
+                message: "Select their new role:",
+                choices: arrayOfRoles,
+              },
+            ])
+            .then(function (res) {
+              console.log(res);
+              const role = res.role;
+              connection.query(
+                //   //now we grab allllll the information from the new role they selected
+                "SELECT * FROM role WHERE title = ?",
+                [role],
+                function (err, res) {
+                  if (err) throw err;
+                  // console.log("In the first query", res);
+                  //NOW WE NEED TO TAKE THE ID OF THAT ROLE AND ASSIGN IT TO THE PERSON
+                  role_id = res[0].id;
+
+                  //BROKEN QUERY
+
+                  // connection.query(
+                  //   "UPDATE employee SET role_id ? WHERE last_name ?",
+                  //   [role_id, name],
+                  //   function (err, res) {
+                  //     if (err) throw err;
+                  //     console.log(
+                  //       "You have successfully updated your employee."
+                  //     );
+                  //   }
+                  // );
+                }
+              );
+            });
+        });
+      });
+
+    // console.log(arrayOfEmployees);
   });
 }
