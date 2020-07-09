@@ -103,9 +103,8 @@ function showRoles() {
 
 //END OF VIEW FUNCTIONS
 
-// //ADD FUNCTIONS
+ //ADD FUNCTIONS
 
-// https://github.com/cibellem/employee_tracker/
 
 function addEmployee() {
   connection.query("SELECT * FROM role", function (err, res) {
@@ -214,9 +213,9 @@ function addRoles() {
   });
 }
 
-// END UP ADD FUNCTIONS
+// END OF ADD FUNCTIONS
 
-//https://github.com/jonathanjwatson/star-fleet-academy/ and https://github.com/abbyblachman/node-mysql-employee-tracker are helpful for addEmployee and updateEmployee functions!!!!!!
+//https://github.com/jonathanjwatson/star-fleet-academy/, https://github.com/cibellem/employee_tracker/  and https://github.com/abbyblachman/node-mysql-employee-tracker are helpful for addEmployee and updateEmployee functions!!!!!!
 
 function updateEmployee() {
   console.log("Please select the employee you would like to update:");
