@@ -36,6 +36,7 @@ function init() {
         "Add Employee",
         "View Department",
         "View Roles",
+        "Add Department",
       ],
     })
     .then(function (response) {
@@ -48,18 +49,21 @@ function init() {
         viewDepartment();
       } else if (response.startingQuestion === "View Roles") {
         showRoles();
+      } else if (response.startingQuestion === "Add Department") {
+        addDepartment();
       }
     });
 }
-
+//VIEW FUNCTIONS
 function viewDepartment() {
   var query = "SELECT * FROM department";
   console.log("let's check out these DEPARTMENTS!");
   connection.query(query, function (err, res) {
     console.log("Departments:");
     res.forEach((department) => {
-      console.log(`${department.name}`);
+      console.table(`${department.name}`);
     });
+    init();
   });
 }
 
@@ -69,8 +73,10 @@ function showEmployees() {
   connection.query(query, function (err, res) {
     console.log("Employees:");
     res.forEach((employee) => {
-      console.log(`${employee.first_name} ${employee.last_name}`);
+      //   console.table(`Name: ${employee.first_name} ${employee.last_name}`);
+      console.table(employee);
     });
+    init();
   });
 }
 
@@ -79,58 +85,36 @@ function showRoles() {
   connection.query(query, function (err, res) {
     console.log("Roles");
     res.forEach((role) => {
-      console.log(`${role.title}`);
+      console.table(`${role.title}`);
     });
+    init();
   });
 }
+
+//END OF VIEW FUNCTIONS
+
+// //ADD FUNCTIONS
+
 function addEmployee() {
-  console.log("Let's add an employee");
-  // const arrayOfManagers
-  const query = "SELECT * FROM employee";
-  connection.query(query, function (err, res) {
-    if (err) throw err;
-    inquirer
-      .prompt([
-        {
-          type: "input",
-          name: "first_name",
-          message: "What is the new employee's first name?",
-        },
-        {
-          type: "input",
-          name: "last_name",
-          message: "What is the new employee's last name?",
-        },
-        {
-          type: "list",
-          name: "role_id",
-          message: "What is the new employee's role?",
-          choices:
-            //   function () {
-            //     rolesArray = [];
-            //     res.forEach(function (res) {
-            //       rolesArray.push(res.role_id);
-            //     });
-            //     return rolesArray;
-            //   },
-            ["Software Engineer", "UX Designer"],
-        },
-        {
-          type: "list",
-          name: "manager_id",
-          message: "Who is their manager?",
-          choices: ["MANAGER 1", "MANAGER 2"],
-        },
-      ])
-      .then(function (res) {
-        console.log(res);
-        connection.query("INSERT INTO employee SET ?", res, function (
-          err,
-          res
-        ) {
-          if (err) throw err;
-          console.log("Employee Added!");
-        });
+  console.log("Employee Added!");
+}
+
+function addDepartment() {
+  inquirer
+    .prompt({
+      type: "input",
+      name: "name",
+      message: "What's the name of the department you want to add?",
+    })
+    .then(function (response) {
+      console.log(response);
+      connection.query("INSERT INTO department SET ?", response, function (
+        err,
+        res
+      ) {
+        if (err) throw err;
+        console.log("Department Added");
       });
-  });
+      init();
+    });
 }
