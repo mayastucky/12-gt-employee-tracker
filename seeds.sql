@@ -46,8 +46,12 @@ INSERT INTO role(title, salary, department_id)
 VALUES("Sales Lead", 60000, 1), ("Salesperson", 50000, 1), ("Software Engineer", 70000, 2), ("UX Designer", 65000, 3);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES("Adam", "Smith",1, 1), ("John", "Doe",2,  2),("blah", "blah", 3, 1);
+VALUES("Adam", "Smith",1, null);
 
-SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name FROM employee 
+INSERT INTO employee(first_name, last_name, role_id, manager_id)
+VALUES ("John", "Doe",2,  1);
+
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, employee.manager_id, manager.first_name, manager.last_name FROM employee 
 LEFT JOIN role ON employee.role_id = role.id
-LEFT JOIN department ON role.department_id = department.id; 
+LEFT JOIN department ON role.department_id = department.id
+LEFT JOIN employee manager ON manager.id = employee.manager_id;
