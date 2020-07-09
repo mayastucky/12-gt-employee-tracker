@@ -33,10 +33,11 @@ function init() {
       message: "What would you like to do today?",
       choices: [
         "View Employees",
-        "Add Employee",
         "View Department",
         "View Roles",
+        "Add Employee",
         "Add Department",
+        "Add Role",
       ],
     })
     .then(function (response) {
@@ -51,6 +52,8 @@ function init() {
         showRoles();
       } else if (response.startingQuestion === "Add Department") {
         addDepartment();
+      } else if (response.startingQuestion === "Add Role") {
+        addRoles();
       }
     });
 }
@@ -133,9 +136,9 @@ function addEmployee() {
         },
         //ROLE
         {
-          type: "list", 
+          type: "list",
           choices: arrayOfRoles,
-          name: "role_id"
+          name: "role_id",
         },
         //MANAGER
         // {
@@ -168,4 +171,54 @@ function addDepartment() {
       });
       init();
     });
+}
+
+function addRoles() {
+  //we are selecting department because we want to show the array of departments
+  connection.query("SELECT * FROM department", function (err, res) {
+    const arrayOfDepartments = res.map((department) => department.name);
+    // console.log(arrayOfDepartments);
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What is the name of the new role?",
+          name: "title",
+        },
+        {
+          type: "input",
+          message: "What is the salary of the role?",
+          name: "salary",
+        },
+        {
+          type: "list",
+          message: "In which department is this new role?",
+          name: "department_name",
+          choices: arrayOfDepartments,
+        },
+      ])
+      .then(function (userChoice) {
+        const department = userChoice.department_name;
+        connection.query("SELECT * FROM department", function (err, res) {
+          if (err) throw err;
+          //matches the department name from selection to db department name
+          let matchedDepartment = res.filter(function (res) {
+            return res.name == department;
+          });
+          let id = matchedDepartment[0].id;
+          //now we need to inject these roles
+          connection.query(
+            "INSERT INTO role(title, salary, department_id VALUES (?, ?, ?)",
+            [userChoice.title, parseInt(userChoice.salary), id],
+            function (err, res) {
+              if (err) throw err;
+              console.log("Role added successfully!");
+            }
+          );
+        });
+
+        console.log(userChoice);
+      });
+  });
 }
