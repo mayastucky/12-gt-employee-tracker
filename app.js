@@ -39,6 +39,7 @@ function init() {
         "Add Department",
         "Add Role",
         "Update Employee",
+        "Quit",
       ],
     })
     .then(function (response) {
@@ -57,13 +58,14 @@ function init() {
         addRoles();
       } else if (response.startingQuestion === "Update Employee") {
         updateEmployee();
+      } else if (response.startingQuestion === "Quit") {
+        endApp();
       }
     });
 }
 //VIEW FUNCTIONS
 function viewDepartment() {
   var query = "SELECT * FROM department";
-  console.log("let's check out these DEPARTMENTS!");
   connection.query(query, function (err, res) {
     console.log("Departments:");
     res.forEach((department) => {
@@ -72,20 +74,6 @@ function viewDepartment() {
     init();
   });
 }
-
-// function showEmployees() {
-//   var query =
-//     "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id; ";
-//   console.log("Let's check out these super stars!");
-//   connection.query(query, function (err, res) {
-//     console.log("Employees:");
-//     // res.forEach((employee) => {
-//     // console.table(`Name: ${employee.first_name} ${employee.last_name} Role: ${role.title}`);
-//     console.table(res);
-//     // });
-//     init();
-//   });
-// }
 
 //leif fixed this don't touch it!!!!!!!!!!
 function showEmployees() {
@@ -220,21 +208,20 @@ function addRoles() {
             }
           );
         });
-
+        init();
         // console.log(userChoice);
       });
   });
 }
 
-// END UP ADD FUNCTIONS 
+// END UP ADD FUNCTIONS
 
 //https://github.com/jonathanjwatson/star-fleet-academy/ and https://github.com/abbyblachman/node-mysql-employee-tracker are helpful for addEmployee and updateEmployee functions!!!!!!
-
 
 function updateEmployee() {
   console.log("Please select the employee you would like to update:");
   connection.query("SELECT * FROM employee", function (err, res) {
-    console.log("We are in the query!!!!!!!!!!");
+    // console.log("We are in the query!!!!!!!!!!");
     const arrayOfEmployees = res.map(
       // (employee) => employee.first_name + " " + employee.last_name
       (employee) => employee.last_name
@@ -267,6 +254,7 @@ function updateEmployee() {
             ])
             .then(function (res) {
               console.log(res);
+              console.log("You have successfully updated your employee.");
               const role = res.role;
               connection.query(
                 //   //now we grab allllll the information from the new role they selected
@@ -277,25 +265,27 @@ function updateEmployee() {
                   // console.log("In the first query", res);
                   //NOW WE NEED TO TAKE THE ID OF THAT ROLE AND ASSIGN IT TO THE PERSON
                   role_id = res[0].id;
-
-                  //BROKEN QUERY
-
+                  //NOW WE UPDATE
                   connection.query(
                     "UPDATE employee SET role_id = ? WHERE last_name = ?",
                     [role_id, name],
                     function (err, res) {
                       if (err) throw err;
-                      console.log(
-                        "You have successfully updated your employee."
-                      );
+                      //console.log(
+                      // "You have successfully updated your employee."
+                      //);
                     }
                   );
+                  init();
                 }
               );
             });
         });
       });
-
-    // console.log(arrayOfEmployees);
   });
+}
+
+function endApp() {
+  console.log("Come back soon!");
+  connection.end();
 }
