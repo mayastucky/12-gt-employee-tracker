@@ -225,6 +225,7 @@ function addRoles() {
       });
   });
 }
+//https://github.com/jonathanjwatson/star-fleet-academy/ and https://github.com/abbyblachman/node-mysql-employee-tracker are helpful for addEmployee and updateEmployee functions!!!!!!
 
 function updateEmployee() {
   console.log("Please select the employee you would like to update:");
