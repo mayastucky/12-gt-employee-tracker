@@ -67,13 +67,29 @@ function viewDepartment() {
   });
 }
 
+// function showEmployees() {
+//   var query =
+//     "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id; ";
+//   console.log("Let's check out these super stars!");
+//   connection.query(query, function (err, res) {
+//     console.log("Employees:");
+//     // res.forEach((employee) => {
+//     // console.table(`Name: ${employee.first_name} ${employee.last_name} Role: ${role.title}`);
+//     console.table(res);
+//     // });
+//     init();
+//   });
+// }
+
+//leif fixed this don't touch it!!!!!!!!!!
 function showEmployees() {
-  var query = "SELECT * FROM employee";
+  var query =
+    "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id";
   console.log("Let's check out these super stars!");
   connection.query(query, function (err, res) {
     console.log("Employees:");
     res.forEach((employee) => {
-      //   console.table(`Name: ${employee.first_name} ${employee.last_name}`);
+      // console.table(`Name: ${manager.first_name} ${employee.last_name}`);
       console.table(employee);
     });
     init();
@@ -95,8 +111,43 @@ function showRoles() {
 
 // //ADD FUNCTIONS
 
+// https://github.com/cibellem/employee_tracker/
+
 function addEmployee() {
-  console.log("Employee Added!");
+  connection.query("SELECT * FROM role", function (err, res) {
+    if (err) throw err;
+    const arrayOfRoles = res.map((roles) => roles.title);
+    inquirer
+      .prompt([
+        //FIRST NAME
+        {
+          type: "input",
+          name: "first_name",
+          message: "What is the employee's first name?",
+        },
+        //LAST NAME
+        {
+          type: "input",
+          name: "last_name",
+          message: "What is the employee's last name?",
+        },
+        //ROLE
+        {
+          type: "list", 
+          choices: arrayOfRoles,
+          name: "role_id"
+        },
+        //MANAGER
+        // {
+        //   name: "list",
+        //   type: "list",
+        //   message: "Who is their manager?",
+        // },
+      ])
+      .then(function (res) {
+        console.log(res);
+      });
+  });
 }
 
 function addDepartment() {
