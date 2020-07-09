@@ -280,16 +280,16 @@ function updateEmployee() {
 
                   //BROKEN QUERY
 
-                  // connection.query(
-                  //   "UPDATE employee SET role_id ? WHERE last_name ?",
-                  //   [role_id, name],
-                  //   function (err, res) {
-                  //     if (err) throw err;
-                  //     console.log(
-                  //       "You have successfully updated your employee."
-                  //     );
-                  //   }
-                  // );
+                  connection.query(
+                    "UPDATE employee SET role_id = ? WHERE last_name = ?",
+                    [role_id, name],
+                    function (err, res) {
+                      if (err) throw err;
+                      console.log(
+                        "You have successfully updated your employee."
+                      );
+                    }
+                  );
                 }
               );
             });
