@@ -32,4 +32,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 [GitHub Repo](https://github.com/mayastucky/12-gt-employee-tracker)
 
-[Video of App in Action](#)
+[Video of App in Action](https://drive.google.com/file/d/1t8HCDgTnKscD1usJeQkdR0pW9Ly1LmDH/view)
