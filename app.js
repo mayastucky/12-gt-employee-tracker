@@ -145,47 +145,65 @@ function addEmployee() {
           },
         ])
         .then(function (answer) {
-          // let newEmployee = {};
-          // for(let i = 0; i < res.length; i ++){
-          //   if(res[i].title === res.title){}
-          // }
           //we save the role title they selected
-          const role = answer.roleTitle;
-          //now we filter through the list of roles and return the one they selected to selectedRole
-          connection.query("SELECT * FROM role", function (err, res) {
-            if (err) throw err;
-            let selectedRole = res.filter(function (res) {
-              return res.title === role;
-            });
-            //now we grab the role ID from that table
-            let roleId = selectedRole[0].id;
+          // const role = answer.roleTitle;
+          // // //now we filter through the list of roles and return the one they selected to selectedRole
+          // connection.query("SELECT * FROM role", function (err, res) {
+          //   if (err) throw err;
+          //   let selectedRole = res.filter(function (res) {
+          //     return res.title === role;
+          //   });
 
-            //now we do a similar thing for the manager!
-            const manager = answer.managerName;
-            connection.query("SELECT * FROM employee", function (err, res) {
-              if (err) throw err;
-              let selectedManager = res.filter(function (err, res) {
-                if (err) throw err;
-                return res.last_name === manager;
-              });
-              let manager_id = selectedManager[0].id;
-              const query =
-                "INSERT INTO employee (first_name, last_name, role_id, manager_id";
-              let values = [
-                answer.first_name,
-                answer.last_name,
-                roleId,
-                manager_id,
-              ];
-              connection.query(query, values, function (err, res) {
-                if (err) throw err;
-                console.log("You have added your new employee!");
-                console.log(res);
-              });
-            });
-          });
-          //console.log(res);
+          //   console.log(selectedRole);
+          //   //now we grab the role ID from that table
+          //   let roleId = selectedRole[0].id;
+          //   //now we do a similar thing for the manager!
+          //   const manager = answer.managerName;
+          //   connection.query("SELECT * FROM employee", function (err, res) {
+          //     if (err) throw err;
+          //     let selectedManager = res.filter(function (err, res) {
+          //       if (err) throw err;
+          //       return res.last_name === manager;
+          //     });
+          //     let manager_id = selectedManager[0].id;
+          //     const query =
+          //       "INSERT INTO employee (first_name, last_name, role_id, manager_id";
+          //     let values = [
+          //       answer.first_name,
+          //       answer.last_name,
+          //       roleId,
+          //       manager_id,
+          //     ];
+          //     connection.query(query, values, function (err, res) {
+          //       if (err) throw err;
+          //       console.log("You have added your new employee!");
+          //       console.log(res);
+          //     });
+          //   });
+          // });
+          // console.log(res);
           //need to grab their manager's last name and link it to their ID and insert all that information into employee
+          console.log(res);
+          let newEmployee = {};
+          for (let i = 0; i < res.length; i++) {
+            if (res[i].title === answer.roleTitle) {
+              newEmployee = res[i];
+            }
+          }
+          const { first_name, last_name } = answer;
+          connection.query(
+            "INSERT INTO employee SET ?",
+            {
+              first_name: first_name,
+              last_name: last_name,
+              role_id: newEmployee.id,
+            },
+            function (err) {
+              if (err) throw err;
+              console.log("Employee Added Successfully. ");
+              init();
+            }
+          );
         });
     });
   });
