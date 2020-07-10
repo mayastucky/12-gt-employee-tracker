@@ -103,13 +103,19 @@ function showRoles() {
 
 //END OF VIEW FUNCTIONS
 
- //ADD FUNCTIONS
-
+//ADD FUNCTIONS
 
 function addEmployee() {
   connection.query("SELECT * FROM role", function (err, res) {
     if (err) throw err;
     const arrayOfRoles = res.map((roles) => roles.title);
+    //NEED QUERY IN A QUERY TO GET EMPLOYEES!
+    connection.query("SELECT * FROM employee", function (err, res) {
+      const arrayOfEmployees = res.map(
+        // (employee) => employee.first_name + " " + employee.last_name
+        (employee) => employee.last_name
+      );
+
     inquirer
       .prompt([
         //FIRST NAME
@@ -131,16 +137,18 @@ function addEmployee() {
           name: "role_id",
         },
         //MANAGER
-        // {
-        //   name: "list",
-        //   type: "list",
-        //   message: "Who is their manager?",
-        // },
+        {
+          name: "manager_id",
+          type: "list",
+          message: "Who is their manager?",
+          choices: arrayOfEmployees
+        },
       ])
       .then(function (res) {
         console.log(res);
       });
   });
+});
 }
 
 function addDepartment() {
