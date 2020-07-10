@@ -68,9 +68,10 @@ function viewDepartment() {
   var query = "SELECT * FROM department";
   connection.query(query, function (err, res) {
     console.log("Departments:");
-    res.forEach((department) => {
-      console.table(`${department.name}`);
-    });
+    // res.forEach((department) => {
+    //   console.table(`${department.name}`);
+    // });
+    console.table(res);
     init();
   });
 }
@@ -82,10 +83,11 @@ function showEmployees() {
   console.log("Let's check out these super stars!");
   connection.query(query, function (err, res) {
     console.log("Employees:");
-    res.forEach((employee) => {
-      // console.table(`Name: ${manager.first_name} ${employee.last_name}`);
-      console.table(employee);
-    });
+    // res.forEach((employee) => {
+    //   // console.table(`Name: ${manager.first_name} ${employee.last_name}`);
+    //   console.table(employee);
+    // });
+    console.table(res);
     init();
   });
 }
@@ -94,9 +96,10 @@ function showRoles() {
   var query = "SELECT * FROM role";
   connection.query(query, function (err, res) {
     console.log("Roles");
-    res.forEach((role) => {
-      console.table(`${role.title}`);
-    });
+    // res.forEach((role) => {
+    //   console.table(`${role.title}`);
+    // });
+    console.table(res);
     init();
   });
 }
@@ -160,7 +163,7 @@ function addEmployee() {
           let selectedManager = {};
           for (let i = 0; i < resEmployee; i++) {
             if (resEmployee.id === answer.managerName) {
-              selectedManager = resEmployee[i];
+              selectedManager = resEmployee[i].id;
             }
           }
           const { first_name, last_name } = answer;
