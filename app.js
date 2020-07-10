@@ -116,39 +116,79 @@ function addEmployee() {
         (employee) => employee.last_name
       );
 
-    inquirer
-      .prompt([
-        //FIRST NAME
-        {
-          type: "input",
-          name: "first_name",
-          message: "What is the employee's first name?",
-        },
-        //LAST NAME
-        {
-          type: "input",
-          name: "last_name",
-          message: "What is the employee's last name?",
-        },
-        //ROLE
-        {
-          type: "list",
-          choices: arrayOfRoles,
-          name: "role_id",
-        },
-        //MANAGER
-        {
-          name: "manager_id",
-          type: "list",
-          message: "Who is their manager?",
-          choices: arrayOfEmployees
-        },
-      ])
-      .then(function (res) {
-        console.log(res);
-      });
+      inquirer
+        .prompt([
+          //FIRST NAME
+          {
+            type: "input",
+            name: "first_name",
+            message: "What is the employee's first name?",
+          },
+          //LAST NAME
+          {
+            type: "input",
+            name: "last_name",
+            message: "What is the employee's last name?",
+          },
+          //ROLE
+          {
+            type: "list",
+            choices: arrayOfRoles,
+            name: "roleTitle",
+          },
+          //MANAGER
+          {
+            name: "managerName",
+            type: "list",
+            message: "Who is their manager?",
+            choices: arrayOfEmployees,
+          },
+        ])
+        .then(function (answer) {
+          // let newEmployee = {};
+          // for(let i = 0; i < res.length; i ++){
+          //   if(res[i].title === res.title){}
+          // }
+          //we save the role title they selected
+          const role = answer.roleTitle;
+          //now we filter through the list of roles and return the one they selected to selectedRole
+          connection.query("SELECT * FROM role", function (err, res) {
+            if (err) throw err;
+            let selectedRole = res.filter(function (res) {
+              return res.title === role;
+            });
+            //now we grab the role ID from that table
+            let roleId = selectedRole[0].id;
+
+            //now we do a similar thing for the manager!
+            const manager = answer.managerName;
+            connection.query("SELECT * FROM employee", function (err, res) {
+              if (err) throw err;
+              let selectedManager = res.filter(function (err, res) {
+                if (err) throw err;
+                return res.last_name === manager;
+              });
+              let manager_id = selectedManager[0].id;
+              const query =
+                "INSERT INTO employee (first_name, last_name, role_id, manager_id";
+              let values = [
+                answer.first_name,
+                answer.last_name,
+                roleId,
+                manager_id,
+              ];
+              connection.query(query, values, function (err, res) {
+                if (err) throw err;
+                console.log("You have added your new employee!");
+                console.log(res);
+              });
+            });
+          });
+          //console.log(res);
+          //need to grab their manager's last name and link it to their ID and insert all that information into employee
+        });
+    });
   });
-});
 }
 
 function addDepartment() {
